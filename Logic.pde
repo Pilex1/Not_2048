@@ -1,104 +1,122 @@
-void moveUpHelper(int row) {
-  for (int j = row; j >= 1; j--) {
-    for (int i = 0; i < cells.length; i++) {
-      if (cells[i][j-1].val == 0) {
-        cells[i][j-1].set(cells[i][j].val);
-        cells[i][j].set(0);
-      } else if (cells[i][j].val == cells[i][j-1].val) {
-        if (cells[i][j].val < 0) {
-          cells[i][j-1].sub(1);
-        } else {
-          cells[i][j-1].add(1);
+enum GameMode {
+  SinglePlayer, TwoPlayer, AI
+}
+
+void moveHelper(int line, Direction dir) {
+  switch (dir) {
+  case Up:
+    for (int j = line; j >= 1; j--) {
+      for (int i = 0; i < cells.length; i++) {
+        if (!movePositive && cells[i][j].val > 0) continue;
+        if (!moveNegative && cells[i][j].val < 0) continue;
+        if (cells[i][j-1].val == 0) {
+          cells[i][j-1].set(cells[i][j].val);
+          cells[i][j].set(0);
+        } else if (cells[i][j].val == cells[i][j-1].val) {
+          if (cells[i][j].val < 0) {
+            cells[i][j-1].sub(1);
+          } else {
+            cells[i][j-1].add(1);
+          }
+          cells[i][j].set(0);
+        } else if (cells[i][j].val == -cells[i][j-1].val) {
+          cells[i][j].set(0);
+          cells[i][j-1].set(0);
         }
-        cells[i][j].set(0);
-      } else if (cells[i][j].val == -cells[i][j-1].val) {
-        cells[i][j].set(0);
-        cells[i][j-1].set(0);
       }
     }
-  }
-}
-void moveUp() {
-  for (int j = 1; j < cells[0].length; j++) {
-    moveUpHelper(j);
+    break;
+  case Down:
+    for (int j = line; j < cells[0].length - 1; j++) {
+      for (int i = 0; i < cells.length; i++) {
+        if (!movePositive && cells[i][j].val > 0) continue;
+        if (!moveNegative && cells[i][j].val < 0) continue;
+        if (cells[i][j+1].val == 0) {
+          cells[i][j+1].set(cells[i][j].val);
+          cells[i][j].set(0);
+        } else if (cells[i][j+1].val == cells[i][j].val) {
+          if (cells[i][j+1].val > 0) {
+            cells[i][j+1].add(1);
+          } else {
+            cells[i][j+1].sub(1);
+          }
+          cells[i][j].set(0);
+        } else if (cells[i][j].val == -cells[i][j+1].val) {
+          cells[i][j].set(0);
+          cells[i][j+1].set(0);
+        }
+      }
+    }
+    break;
+  case Right:
+    for (int i = line; i < cells.length - 1; i++) {
+      for (int j = 0; j < cells[0].length; j++) {
+        if (!movePositive && cells[i][j].val > 0) continue;
+        if (!moveNegative && cells[i][j].val < 0) continue;
+        if (cells[i+1][j].val == 0) {
+          cells[i+1][j].set(cells[i][j].val);
+          cells[i][j].set(0);
+        } else if (cells[i+1][j].val == cells[i][j].val) {
+          if (cells[i][j].val > 0) {
+            cells[i+1][j].add(1);
+          } else {
+            cells[i+1][j].sub(1);
+          }
+          cells[i][j].set(0);
+        } else if (cells[i][j].val == -cells[i+1][j].val) {
+          cells[i][j].set(0);
+          cells[i+1][j].set(0);
+        }
+      }
+    }
+    break;
+  case Left:
+    for (int i = line; i >= 1; i--) {
+      for (int j = 0; j < cells[0].length; j++) {
+        if (!movePositive && cells[i][j].val > 0) continue;
+        if (!moveNegative && cells[i][j].val < 0) continue;
+        if (cells[i-1][j].val == 0) {
+          cells[i-1][j].set(cells[i][j].val);
+          cells[i][j].set(0);
+        } else if (cells[i][j].val == cells[i-1][j].val) {
+          if (cells[i][j].val > 0) {
+            cells[i-1][j].add(1);
+          } else {
+            cells[i-1][j].sub(1);
+          }
+          cells[i][j].set(0);
+        } else if (cells[i][j].val == -cells[i-1][j].val) {
+          cells[i][j].set(0);
+          cells[i-1][j].set(0);
+        }
+      }
+    }
+    break;
   }
 }
 
-void moveDownHelper(int row) {
-  for (int j = row; j < cells[0].length - 1; j++) {
-    for (int i = 0; i < cells.length; i++) {
-      if (cells[i][j+1].val == 0) {
-        cells[i][j+1].set(cells[i][j].val);
-        cells[i][j].set(0);
-      } else if (cells[i][j+1].val == cells[i][j].val) {
-        if (cells[i][j+1].val > 0) {
-          cells[i][j+1].add(1);
-        } else {
-          cells[i][j+1].sub(1);
-        }
-        cells[i][j].set(0);
-      } else if (cells[i][j].val == -cells[i][j+1].val) {
-        cells[i][j].set(0);
-        cells[i][j+1].set(0);
-      }
+void move(Direction d) {
+  switch (d) {
+  case Up:
+    for (int j = 1; j < cells[0].length; j++) {
+      moveHelper(j, Direction.Up);
     }
-  }
-}
-void moveDown() {
-  for (int j = cells[0].length - 2; j >= 0; j--) {
-    moveDownHelper(j);
-  }
-}
-
-void moveLeftHelper(int col) {
-  for (int i = col; i >= 1; i--) {
-    for (int j = 0; j < cells[0].length; j++) {
-      if (cells[i-1][j].val == 0) {
-        cells[i-1][j].set(cells[i][j].val);
-        cells[i][j].set(0);
-      } else if (cells[i][j].val == cells[i-1][j].val) {
-        if (cells[i][j].val > 0) {
-         cells[i-1][j].add(1);
-        }else{
-         cells[i-1][j].sub(1);
-        }
-        cells[i][j].set(0);
-      } else if (cells[i][j].val == -cells[i-1][j].val) {
-        cells[i][j].set(0);
-        cells[i-1][j].set(0);
-      }
+    break;
+  case Down:
+    for (int j = cells[0].length - 2; j >= 0; j--) {
+      moveHelper(j, Direction.Down);
     }
-  }
-}
-void moveLeft() {
-  for (int i = 1; i < cells.length; i++) {
-    moveLeftHelper(i);
-  }
-}
-
-void moveRightHelper(int col) {
-  for (int i = col; i < cells.length - 1; i++) {
-    for (int j = 0; j < cells[0].length; j++) {
-      if (cells[i+1][j].val == 0) {
-        cells[i+1][j].set(cells[i][j].val);
-        cells[i][j].set(0);
-      } else if (cells[i+1][j].val == cells[i][j].val) {
-        if (cells[i][j].val > 0) {
-         cells[i+1][j].add(1);
-        }else{
-         cells[i+1][j].sub(1);
-        }
-        cells[i][j].set(0);
-      } else if (cells[i][j].val == -cells[i+1][j].val) {
-        cells[i][j].set(0);
-        cells[i+1][j].set(0);
-      }
+    break;
+  case Right:
+    for (int i = cells.length - 2; i >= 0; i--) {
+      moveHelper(i, Direction.Right);
     }
-  }
-}
-void moveRight() {
-  for (int i = cells.length - 2; i >= 0; i--) {
-    moveRightHelper(i);
+    break;
+  case Left:
+    for (int i = 1; i < cells.length; i++) {
+      moveHelper(i, Direction.Left);
+    }
+    break;
   }
 }
 
@@ -112,6 +130,24 @@ Vector2i[] getEmptyCells() {
     }
   }
   return (Vector2i[])list.toArray(new Vector2i[list.size()]);
+}
+
+boolean hasNegative() {
+  for (int i = 0; i < cells.length; i++) {
+    for (int j = 0; j < cells[0].length; j++) {
+      if (cells[i][j].val < 0) return true;
+    }
+  }
+  return false;
+}
+
+boolean hasPositive() {
+  for (int i = 0; i < cells.length; i++) {
+    for (int j = 0; j < cells[0].length; j++) {
+      if (cells[i][j].val > 0) return true;
+    }
+  }
+  return false;
 }
 
 boolean validRegion(int x, int y) {
@@ -146,7 +182,17 @@ void randomPopulate() {
   Vector2i[] list = getEmptyCells();
   if (list.length == 0) return;
   Vector2i v = list[int(random(0, list.length))];
-  cells[v.x][v.y].val = (random(0, 1) < 0.5 ? 1 : 2) * (random(0, 1) < NEG_BIAS ? -1 : 1);
+  if (gameMode == GameMode.SinglePlayer || gameMode == GameMode.AI) {
+    cells[v.x][v.y].val = (random(0, 1) < 0.5 ? 1 : 2) * (random(0, 1) < negBias ? -1 : 1);
+  } else if (gameMode == GameMode.TwoPlayer) {
+    if (!hasPositive()) {
+      cells[v.x][v.y].val = random(0, 1) < 0.5 ? 1 : 2;
+    } else if (!hasNegative()) {
+      cells[v.x][v.y].val = random(0, 1) < 0.5 ? -1 : -2;
+    } else {
+      cells[v.x][v.y].val = (random(0, 1) < 0.5 ? 1 : 2) * (random(0, 1) < negBias ? -1 : 1);
+    }
+  }
   cells[v.x][v.y].newCount = -ENLARGE_TIME;
 }
 
@@ -161,14 +207,23 @@ Cell[][] copyCells() {
 }
 
 int getHighestCell() {
-   int max = -2147483648;
-   Cell cell;
-   for (int i = 0; i < cells.length; i++) {
+  int max = -2147483648;
+  for (int i = 0; i < cells.length; i++) {
     for (int j = 0; j < cells[0].length; j++) {
       max = max(max, cells[i][j].val);
     }
   }
   return max;
+}
+
+int getLowestCell() {
+  int min =  2147483647;
+  for (int i = 0; i < cells.length; i++) {
+    for (int j = 0; j < cells[0].length; j++) {
+      min = min(min, cells[i][j].val);
+    }
+  }
+  return min;
 }
 
 boolean equalsCells(Cell[][] copy) {
@@ -181,7 +236,7 @@ boolean equalsCells(Cell[][] copy) {
 }
 
 void resetAnimations() {
-   for (int i = 0; i < cells.length; i++) {
+  for (int i = 0; i < cells.length; i++) {
     for (int j = 0; j < cells[0].length; j++) {
       cells[i][j].life = 0;
       cells[i][j].newCount = 0;
@@ -189,18 +244,76 @@ void resetAnimations() {
   }
 }
 
+void reset() {
+
+  int seed = int(random(2147483647));
+  println("Seed: " + seed);
+
+  cells = new Cell[int(numericalX.val)][int(numericalY.val)];
+
+  for (int i = 0; i < cells.length; i++) {
+    for (int j = 0; j < cells[0].length; j++) {
+      cells[i][j] = new Cell(0);
+    }
+  }
+
+  for (int i = 0; i < cells.length; i++) {
+    for (int j = 0; j < cells[0].length; j++) {
+      cells[i][j].newCount = 0;
+    }
+  }
+
+  score = 0;
+  gameCount = 0;
+  gameOverCount = 0;
+  moves = 0;
+
+  if (gameMode == GameMode.SinglePlayer || gameMode == GameMode.AI) {
+    negBias = 0.2;
+  } else if (gameMode == GameMode.TwoPlayer) {
+    negBias = 0.5;
+  }
+
+  for (int i = 0; i < random(2, 4); i++) {
+    randomPopulate();
+  }
+}
+
+void swipe(Direction dir) {
+  if (gameMode == GameMode.TwoPlayer) {
+    if (positiveTurn) {
+      movePositive = true;
+      moveNegative = false;
+    } else {
+      movePositive = false;
+      moveNegative = true;
+    }
+  } else if (gameMode == GameMode.SinglePlayer || gameMode == GameMode.AI) {
+    movePositive = moveNegative = true;
+  }
+  resetAnimations();
+  Cell[][] copy = copyCells();
+  move(dir);
+  if (!equalsCells(copy)) {
+    randomPopulate();
+    moves++;
+    positiveTurn = !positiveTurn;
+  }
+}
+
+
 String convertTime() {
-   int seconds = gameCount / 60;
-   int hours = seconds / 3600;
-   int minutes = seconds / 60;
-   
-   int dSeconds = seconds % 60;
-   int dMinutes = minutes % 60;
-   
-   String s = "";
-   if (hours > 0) s += hours + "h ";
-   if (dMinutes > 0) s += dMinutes + "m ";
-   if (dSeconds > 0) s += dSeconds + "s";
-   if (s == "") s = "0s";
-   return s;
+  int seconds = gameCount / 60;
+  int hours = seconds / 3600;
+  int minutes = seconds / 60;
+
+  int dSeconds = seconds % 60;
+  int dMinutes = minutes % 60;
+
+  String s = "";
+  if (hours > 0) s += hours + "h ";
+  if (dMinutes > 0) s += dMinutes + "m ";
+  if (dSeconds > 0) s += dSeconds + "s";
+  if (s == "") s = "0s";
+  return s;
 }

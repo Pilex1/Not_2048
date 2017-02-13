@@ -24,13 +24,17 @@ class Cell {
   }
   public String getValue() {
     if (val > 0) {
-      return "" + int(pow(2, val - 1) * MULTIPLE);
+      return "" + int(pow(2, val - 1) * numericalMultiple.val);
     } else if (val == 0) {
       return "";
     } else {
-      return "" + (-int(pow(2, abs(val) - 1) * MULTIPLE));
+      return "" + (-int(pow(2, abs(val) - 1) * numericalMultiple.val));
     }
   }
+}
+
+enum Direction {
+   Up, Right, Down, Left 
 }
 
 class Vector2i {

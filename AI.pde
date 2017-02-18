@@ -1,13 +1,14 @@
 class AI {
 
-  /*
-  
-   1. Fills up bottom right corner
-   2. Cancels out any negatives
-   
-   */
-
   void update() {
+    
+       //if all else fails
+    Cell[][] copy = copyCells();
+    
+    if (cells[cells.length-1][cells[0].length-1].val == 0) {
+      swipe(Direction.Down);
+      if (!equalsCells(copy)) return;
+    }
 
     //Fills up bottom right corner
     if (isEmptyColumn(cells.length-1)) {
@@ -70,8 +71,7 @@ class AI {
 
 
 
-    //if all else fails
-    Cell[][] copy = copyCells();
+ 
 
     swipe(Direction.Right);
     if (!equalsCells(copy)) return;
